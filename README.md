@@ -76,7 +76,7 @@ curl localhost:8080
 ```
 
 ```wit
-package wasmcloud:hello;
+package gopher:hello;
 
 world hello {
   export wasi:http/incoming-handler@0.2.0;
@@ -90,9 +90,9 @@ Now that we have a "hello world" out of the way, let's step this up a notch by t
 Taking the hello example, we can add `import`s for `wasi:keyvalue` and `wasi:blobstore` to the wit definition:
 
 ```wit
-package wasmcloud:hello;
+package wasmday:gopher;
 
-world hello {
+world gopher {
   import wasi:keyvalue/eventual@0.2.0-draft;
   import wasi:blobstore/blobstore@0.2.0-draft;
   export wasi:http/incoming-handler@0.2.0;

@@ -1,9 +1,9 @@
-name = "http-hello-world"
+name = "gopher"
 language = "tinygo"
 type = "actor"
 version = "0.1.0"
 
 [actor]
-wit_world = "hello"
+wit_world = "gopher"
 wasm_target = "wasm32-wasi-preview2"
-destination = "build/http_hello_world_s.wasm"
+destination = "build/gopher_s.wasm"

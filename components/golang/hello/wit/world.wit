@@ -1,5 +1,8 @@
-package wasmcloud:hello;
+package wasmday:gopher;
 
-world hello {
+world gopher {
+  import wasi:http/incoming-handler@0.2.0;
+
   export wasi:http/incoming-handler@0.2.0;
 }
+// wac encode --dep wasmcloud:blobby=./components/rust/blobby/build/blobby_s.wasm --dep wasmday:gopher=./components/golang/gopher/build/gopher_s.wasm

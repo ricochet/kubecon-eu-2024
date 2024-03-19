@@ -1,0 +1,7 @@
+package wasmday:globby;
+
+let blobby = new wasmcloud:blobby { ... };
+
+let gopher = new wasmday:gopher { "wasi:http/incoming-handler@0.2.0": blobby.incoming-handler };
+
+export gopher...;

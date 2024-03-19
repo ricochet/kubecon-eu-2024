@@ -19,6 +19,7 @@ func init() {
 }
 
 func (h HttpServer) Handle(request HttpRequest, responseWriter HttpResponseWriter) {
+
 	// Construct HttpResponse to send back
 	headers := http.NewFields()
 	httpResponse := http.NewOutgoingResponse(headers)
