@@ -4,25 +4,23 @@
 
 How many typical microservices can move between clouds? And why would you want to?
 
-1. **Availability and scalability**: By moving microservices to different clouds, you
-can ensure that your application is available even if one cloud experiences an
-outage or goes down for maintenance. In case of an disaster or unexpected outage, you may want to
-move some or all of your microservices to a different cloud to ensure business
-continuity. By having a backup plan in place, you can minimize the impact on your
-customers and revenue.
-1. **Cost optimization**: Different clouds have different pricing models, and some may
-be more cost-effective than others for certain workloads.
-1. **Security and compliance**: Depending on the sensitivity of your data and the
-regulatory requirements you need to meet, you may want to move certain
-microservices to a cloud that offers better security and compliance features.
-Depending on the regulatory requirements, there may be strict requirements for
-data locality and sovereignty.
-1. **Ability to leverage the strengths of each cloud**: For example, if you're
-using AWS for compute and storage, but Google Cloud for machine learning services,
-you can move the relevant microservices to Google Cloud to take advantage of its
-specific capabilities.
+### Problem 1: business logic portability
 
-A decentralized architecture is well-suited for WebAssembly Components.
+The core business logic needs to be adaptable across different platforms without requiring significant modifications
+
+Wasm component & WASI: language neutrality and platform neutrality nature of the CM allow core business logic to be encapsulated within components and reducing the needs to be re-implemented in different languages.
+
+### Problem 2: decoupling from service providers
+
+Cloud providers and platforms offer vendor lock-in features to the business logic
+
+Wasm components & WASI: module linking and language neutrality of the CM allow core business logic to compose and interoperate with cloud providers using a standard interface / WIT.
+
+### Problem 3: maintainability and scalability
+
+Existing solutions like sidecar container decouples the core business logic from service providers by putting the capabilities as sidecar containers. However they require HTTP or gRPC comm and the fact that they are deployed to one pod which can be a bottleneck for scalability and maintainability
+
+Wasm components & WASI: No separate long-live services and communicate over a network and function call in Wasm should be incredibly cheap compared to HTTP or gRPC with overheads from protocol serialization & deserialization
 
 ## Concepts
 
@@ -60,7 +58,7 @@ To get a feel for how to build a component that targets a world, let's start sim
 Since `wasi:cloud/core` is an early phase 1 proposal, many runtimes do not yet support `wasi:cloud/core` interfaces or perhaps support different versions of the interfaces in draft. It is important to note that `wasi:http/proxy` is a world that is `include`d into `wasi:cloud/core`. So while we aren't yet targetting the `wasi:cloud/core` world, we are using part of a `wasi:cloud` component is expected to use. `wasi:http/proxy` was part of the launch of WASI 0.2, so we can use either of the reference implementations for `wasi:http/proxy`, JCO (Node.js with shims) or wasmtime.
 
 ```bash
-cd golang/hello
+cd components/golang/hello
 
 # easiest to build with wash, the "wasmCloud shell"
 wash build
@@ -150,38 +148,29 @@ err := rdb.Set(ctx, "user:ricochet", "animal dog", 0).Err()
   fmt.Printf("Favorite animal is %s", value)
 ```
 
-
-### Running LLM on the edge
-
-```bash
-Step 2: Download the Gemma-7b-it model GGUF file. Since the size of the model is 5.88G so it
-curl -LO https://huggingface.co/second-state/Gemma-7b-it-GGUF/resolve/main/gemma-7```
-
-https://github.com/second-state/llama-utils/tree/main/chat
-```
-
-### Cloud development (8 min)
-
-Zhou deployed in Azure against AKS and OpenAI
-
-`wasmcloud/crates/providers`
-
-
-### LLM
+### Cloud development
 
 ```bash
-curl -sSf https://raw.githubusercontent.com/WasmEdge/WasmEdge/master/utils/install.sh | bash -s -- --plugins wasi_nn-ggml
+export WASMCLOUD_LATTICE=<lattice id>
+
+# temporary while wadm isn't yet released for 1.0
+cd ~/repos/wasmCloud/wadm
+cargo run --features cli --release
+
+az aks get-credentials --resource-group wasmday_group --name wasday --overwrite-existing
+kubectl port-forward svc/nats-cluster 4222
 ```
 
 ### Diagrams
 
-Mossaka: implement azure blobstore in
+Mossaka: implemented azure blobstore
 
 ## Talk track is 25 min
 
 Why is this so exciting? This flexible solution gives us the ability to design around data locality.
 
 Use-cases for this technology:
+
 - We showed building with Golang and Rust.
 - But many more languages are supported including js/ts, python, and more.
 - The types of interfaces available are not restricted to WASI.
